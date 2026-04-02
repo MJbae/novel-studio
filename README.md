@@ -22,8 +22,6 @@ An end-to-end web novel production system built on Claude Code. Combines 18 spec
 
 ## Installation
 
-### Method 1: Plugin Install (Recommended)
-
 ```bash
 # Install the plugin
 /plugin install novel-studio
@@ -32,14 +30,6 @@ An end-to-end web novel production system built on Claude Code. Combines 18 spec
 /novel-studio:propose
 /novel-studio:create
 /novel-studio:polish
-```
-
-### Method 2: Git Clone
-
-```bash
-git clone https://github.com/MJbae/novel-studio my-novel
-cd my-novel && claude
-/propose
 ```
 
 ### Requirements

@@ -20,8 +20,6 @@ AI 기반 웹소설 창작 하네스. Claude Code 위에서 동작하며, 18개 
 
 ## 설치
 
-### 방법 1: 플러그인 설치 (권장)
-
 ```bash
 # 플러그인 설치
 /plugin install novel-studio
@@ -30,14 +28,6 @@ AI 기반 웹소설 창작 하네스. Claude Code 위에서 동작하며, 18개 
 /novel-studio:propose
 /novel-studio:create
 /novel-studio:polish
-```
-
-### 방법 2: Git 클론
-
-```bash
-git clone https://github.com/MJbae/novel-studio my-novel
-cd my-novel && claude
-/propose
 ```
 
 ---
