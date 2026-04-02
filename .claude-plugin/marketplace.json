@@ -6,7 +6,10 @@
   "plugins": [
     {
       "name": "novel-studio",
-      "source": "./",
+      "source": {
+        "source": "github",
+        "repo": "MJbae/novel-studio"
+      },
       "description": "AI 웹소설 창작 하네스",
       "version": "1.1.0"
     }
