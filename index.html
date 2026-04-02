@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novel Studio — AI Web Novel Creation Harness</title>
+<meta property="og:title" content="Novel Studio — AI Web Novel Creation Harness">
+<meta property="og:description" content="18 agents, 10 skills, 16-axis polish. A harness-written novel signed a publishing deal.">
+<meta property="og:url" content="https://MJbae.github.io/novel-studio/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --accent:#f59e0b;
+  --accent2:#fbbf24;
+  --accent-glow:rgba(245,158,11,0.25);
+  --green:#10b981;
+  --bg:#080a14;
+  --surface:#111827;
+  --surface2:#0f172a;
+  --text:#e2e8f0;
+  --text-dim:#94a3b8;
+  --border:rgba(255,255,255,0.06);
+  --radius:16px;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+html.lang-ko{font-family:'Noto Sans KR',-apple-system,sans-serif}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:inherit;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+h1,h2,h3{font-weight:700;letter-spacing:-.02em;line-height:1.2}
+h2{font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:1rem}
+h3{font-size:1.15rem}
+p{color:var(--text-dim);max-width:640px}
+a{color:var(--accent2);text-decoration:none;transition:color .2s}
+a:hover{color:#fcd34d}
+.container{max-width:1100px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
+section{padding:6rem 0}
+
+/* ── Language Toggle ── */
+.lang-toggle{position:fixed;top:1.2rem;right:1.5rem;z-index:100;display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.lang-btn{padding:.3rem .7rem;border:none;border-radius:7px;font-size:.75rem;font-weight:600;color:var(--text-dim);background:transparent;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.03em}
+.lang-btn:hover{color:var(--text)}
+.lang-btn.active{background:var(--accent);color:#fff;box-shadow:0 0 12px var(--accent-glow)}
+
+/* ── Section helpers ── */
+.section-tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);padding:.3rem 1rem;border-radius:100px;margin-bottom:1.2rem}
+.section-desc{font-size:1.05rem;color:var(--text-dim);max-width:600px;margin:0 auto;line-height:1.8}
+.section-alt{background:var(--surface2)}
+.text-center{text-align:center}
+
+/* ── Hero ── */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;background:radial-gradient(ellipse at 50% 0%,rgba(245,158,11,0.06) 0%,transparent 60%)}
+.hero-inner{max-width:780px}
+.badge{display:inline-block;padding:.4rem 1.2rem;border-radius:100px;font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:rgba(245,158,11,0.1);color:var(--accent2);border:1px solid rgba(245,158,11,0.25);margin-bottom:2rem}
+.badge-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:.5rem;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:900;margin-bottom:1rem}
+.hero h1 .accent{background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.15rem;color:var(--text-dim);margin:0 auto 2.5rem;max-width:480px;line-height:1.8}
+.hero-sub strong{color:var(--accent2)}
+
+/* ── Proof box ── */
+.proof-box{display:inline-flex;align-items:center;gap:1rem;background:var(--surface);border:1px solid rgba(245,158,11,0.2);border-radius:var(--radius);padding:1rem 1.8rem;margin-bottom:2.5rem;text-align:left}
+.proof-icon{font-size:2rem}
+.proof-label{font-size:.75rem;color:var(--text-dim);letter-spacing:.03em}
+.proof-title{font-size:1rem;font-weight:700;color:var(--accent2)}
+.proof-note{font-size:.7rem;color:var(--text-dim);margin-top:.2rem}
+
+/* ── Metric cards ── */
+.metrics-row{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem 2rem;min-width:160px;text-align:center;transition:all .3s}
+.metric-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)}
+.metric-icon{font-size:1.6rem;margin-bottom:.5rem}
+.metric-value{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent2),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.metric-label{font-size:.8rem;color:var(--text-dim);margin-top:.3rem}
+
+/* ── Problem cards (THE WALL) ── */
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3rem}
+.problem-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:var(--radius);padding:2rem;transition:all .3s}
+.problem-card:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,.3)}
+.problem-card.card-amber{border-top-color:#f59e0b}
+.problem-card.card-blue{border-top-color:#3b82f6}
+.problem-card.card-purple{border-top-color:#8b5cf6}
+.problem-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1rem}
+.problem-icon.icon-amber{background:rgba(245,158,11,0.1)}
+.problem-icon.icon-blue{background:rgba(59,130,246,0.1)}
+.problem-icon.icon-purple{background:rgba(139,92,246,0.1)}
+.problem-card h3{margin-bottom:.5rem;color:var(--text)}
+.problem-card>p{font-size:.88rem;line-height:1.7;margin-bottom:1.2rem}
+.solution-box{border:1px solid rgba(245,158,11,0.25);border-radius:12px;padding:1rem 1.2rem;background:rgba(245,158,11,0.03)}
+.solution-box.sol-blue{border-color:rgba(59,130,246,0.25);background:rgba(59,130,246,0.03)}
+.solution-box.sol-purple{border-color:rgba(139,92,246,0.25);background:rgba(139,92,246,0.03)}
+.solution-tag{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.08em;padding:.2rem .6rem;border-radius:6px;color:#fff;margin-bottom:.5rem}
+.solution-tag.tag-amber{background:#f59e0b}
+.solution-tag.tag-blue{background:#3b82f6}
+.solution-tag.tag-purple{background:#8b5cf6}
+.solution-name{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.3rem;font-family:'JetBrains Mono',monospace}
+.solution-desc{font-size:.8rem;color:var(--text-dim);line-height:1.6}
+
+/* ── Pipeline (vertical) ── */
+.pipeline-track{display:flex;flex-direction:column;gap:0;margin-top:3rem;position:relative;max-width:600px;margin-left:auto;margin-right:auto}
+.pipeline-track::before{content:'';position:absolute;left:28px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--accent),var(--green),#8b5cf6,#ec4899);opacity:.3}
+.pipe-step{display:flex;gap:1.5rem;align-items:flex-start;padding:1.2rem 0;opacity:.4;transform:translateX(-20px);transition:all .5s ease}
+.pipe-step.active{opacity:1;transform:translateX(0)}
+.pipe-dot{width:56px;min-width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--surface);border:2px solid var(--border);transition:all .4s;position:relative;z-index:1}
+.pipe-step.active .pipe-dot{box-shadow:0 0 20px var(--accent-glow)}
+.pipe-step.active .pipe-dot.dot-amber{border-color:#f59e0b;background:rgba(245,158,11,0.1)}
+.pipe-step.active .pipe-dot.dot-blue{border-color:#3b82f6;background:rgba(59,130,246,0.1)}
+.pipe-step.active .pipe-dot.dot-green{border-color:#10b981;background:rgba(16,185,129,0.1)}
+.pipe-step.active .pipe-dot.dot-purple{border-color:#8b5cf6;background:rgba(139,92,246,0.1)}
+.pipe-step.active .pipe-dot.dot-pink{border-color:#ec4899;background:rgba(236,72,153,0.1)}
+.pipe-cmd{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:600;margin-bottom:.1rem}
+.pipe-cmd.cmd-amber{color:#f59e0b}
+.pipe-cmd.cmd-blue{color:#3b82f6}
+.pipe-cmd.cmd-green{color:#10b981}
+.pipe-cmd.cmd-purple{color:#8b5cf6}
+.pipe-cmd.cmd-pink{color:#ec4899}
+.pipe-label{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:.2rem}
+.pipe-desc{font-size:.82rem;color:var(--text-dim);line-height:1.5}
+
+/* ── Agents ── */
+.agent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-top:3rem}
+.agent-phase{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
+.agent-phase-header{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.agent-phase-dot{width:10px;height:10px;border-radius:50%}
+.agent-phase-label{font-weight:700;font-size:.95rem}
+.agent-phase-count{font-size:.8rem;font-weight:700;margin-left:auto}
+.agent-chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.agent-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .7rem;border-radius:100px;border:1px solid var(--border);font-size:.75rem;font-family:'JetBrains Mono',monospace;transition:all .2s;cursor:default}
+.agent-chip:hover{transform:scale(1.06);filter:brightness(1.2)}
+.chip-blue{border-color:rgba(59,130,246,0.2);background:rgba(59,130,246,0.05);color:#3b82f6}
+.chip-green{border-color:rgba(16,185,129,0.2);background:rgba(16,185,129,0.05);color:#10b981}
+.chip-purple{border-color:rgba(139,92,246,0.2);background:rgba(139,92,246,0.05);color:#8b5cf6}
+.chip-pink{border-color:rgba(236,72,153,0.2);background:rgba(236,72,153,0.05);color:#ec4899}
+
+/* ── Axes grid ── */
+.axes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:3rem}
+.axis-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;transition:all .3s;cursor:default}
+.axis-item:hover{transform:scale(1.04)}
+.axis-id{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1.5px solid;font-size:.7rem;font-weight:700;margin-bottom:.4rem}
+.axis-name{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:.2rem;font-family:'JetBrains Mono',monospace}
+.axis-desc{font-size:.7rem;color:var(--text-dim)}
+.ax-red{border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.04)}
+.ax-red .axis-id{color:#ef4444;border-color:rgba(239,68,68,0.4)}
+.ax-amber{border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)}
+.ax-amber .axis-id{color:#f59e0b;border-color:rgba(245,158,11,0.4)}
+.ax-purple{border-color:rgba(139,92,246,0.3);background:rgba(139,92,246,0.04)}
+.ax-purple .axis-id{color:#8b5cf6;border-color:rgba(139,92,246,0.4)}
+.ax-blue{border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.04)}
+.ax-blue .axis-id{color:#3b82f6;border-color:rgba(59,130,246,0.4)}
+.ax-green{border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.04)}
+.ax-green .axis-id{color:#10b981;border-color:rgba(16,185,129,0.4)}
+.ax-cyan{border-color:rgba(6,182,212,0.3);background:rgba(6,182,212,0.04)}
+.ax-cyan .axis-id{color:#06b6d4;border-color:rgba(6,182,212,0.4)}
+.ax-pink{border-color:rgba(236,72,153,0.3);background:rgba(236,72,153,0.04)}
+.ax-pink .axis-id{color:#ec4899;border-color:rgba(236,72,153,0.4)}
+
+/* ── Timeline (story) ── */
+.timeline{margin-top:3rem;display:flex;flex-direction:column;gap:0;max-width:700px;margin-left:auto;margin-right:auto}
+.timeline-row{display:flex;gap:1.5rem;align-items:flex-start}
+.timeline-track{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.timeline-node{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:#fff}
+.timeline-line{width:2px;height:40px;background:rgba(255,255,255,0.08);margin:4px 0}
+.timeline-card{flex:1;background:linear-gradient(145deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem}
+.timeline-card.card-highlight{border-color:rgba(236,72,153,0.25);background:linear-gradient(145deg,rgba(236,72,153,0.04),var(--surface2))}
+.timeline-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem}
+.timeline-text{font-size:.9rem;color:var(--text-dim);line-height:1.8}
+.timeline-text strong{color:var(--accent2)}
+.timeline-closing{font-size:.88rem;font-weight:600;margin-top:1rem;line-height:1.6}
+
+/* ── Install section ── */
+.install{text-align:center}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.5rem;margin:1rem auto;max-width:540px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:.85rem;text-align:left;position:relative;cursor:pointer;transition:all .3s}
+.code-block:hover{border-color:var(--accent)}
+.code-block .prompt{color:var(--green)}
+.code-block .cmd{color:var(--text)}
+.code-block .comment{color:var(--text-dim)}
+.copy-btn{position:absolute;top:.8rem;right:.8rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.35rem .65rem;font-size:.7rem;color:var(--text-dim);cursor:pointer;transition:all .2s;font-family:inherit}
+.copy-btn:hover{color:var(--accent2);border-color:var(--accent)}
+.copy-btn.copied{color:var(--green);border-color:var(--green)}
+.code-label{font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;font-family:'Inter',sans-serif}
+
+/* ── Footer ── */
+footer{padding:3rem 0;border-top:1px solid var(--border);text-align:center}
+footer p{margin:0 auto;font-size:.82rem;color:var(--text-dim)}
+footer .links{display:flex;gap:2rem;justify-content:center;margin-bottom:1rem}
+
+/* ── Scroll reveal ── */
+.reveal{opacity:0;transform:translateY(30px);transition:all .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .agent-grid{grid-template-columns:1fr}
+  .axes-grid{grid-template-columns:repeat(3,1fr)}
+  section{padding:4rem 0}
+  .lang-toggle{top:.8rem;right:.8rem}
+  .proof-box{flex-direction:column;text-align:center;padding:1rem}
+  .metrics-row{flex-direction:column;align-items:center}
+}
+@media(max-width:480px){
+  .axes-grid{grid-template-columns:repeat(2,1fr)}
+  .problem-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Language Toggle ── -->
+<div class="lang-toggle">
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" data-lang="ko" onclick="setLang('ko')">KO</button>
+</div>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge"><span class="badge-dot"></span>PRODUCTION-LEVEL HARNESS</div>
+    <h1><span class="accent">Novel</span> Studio</h1>
+    <p class="hero-sub" data-i18n="hero.sub" data-i18n-html="true">A harness-driven creative pipeline<br><strong>for writing long-form web novels</strong></p>
+
+    <div class="proof-box reveal">
+      <div class="proof-icon">&#x1F4DC;</div>
+      <div>
+        <div class="proof-label" data-i18n="hero.proof_label">A web novel written by this harness</div>
+        <div class="proof-title" data-i18n="hero.proof_title">Signed a publishing deal</div>
+        <div class="proof-note" data-i18n="hero.proof_note">&#x203B; Title under NDA</div>
+      </div>
+    </div>
+
+    <div class="metrics-row reveal">
+      <div class="metric-card">
+        <div class="metric-icon">&#x1F441;&#xFE0F;</div>
+        <div class="metric-value"><span data-target="2500" data-suffix="+">0</span></div>
+        <div class="metric-label" data-i18n="hero.views">Daily Views</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">&#x2764;&#xFE0F;</div>
+        <div class="metric-value"><span data-target="1000" data-suffix="+">0</span></div>
+        <div class="metric-label" data-i18n="hero.likes">Likes</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon">&#x1F514;</div>
+        <div class="metric-value"><span data-target="300" data-suffix="+">0</span></div>
+        <div class="metric-label" data-i18n="hero.subs">Subscribers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ INSTALL ══════════════ -->
+<section class="install" id="install">
+  <div class="container">
+    <div class="section-tag reveal">INSTALL</div>
+    <h2 class="reveal" data-i18n="install.title">Get Started</h2>
+
+    <div class="reveal">
+      <div class="code-block" id="code-plugin">
+        <div class="code-label" data-i18n="install.label1">Plugin Install (Recommended)</div>
+        <button class="copy-btn" onclick="copyCode(this,'code-plugin')" data-i18n="common.copy">Copy</button>
+        <span class="prompt">/</span> <span class="cmd">plugin install github:MJbae/novel-studio</span>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="code-block" id="code-git">
+        <div class="code-label" data-i18n="install.label2">Manual Install (Git Clone)</div>
+        <button class="copy-btn" onclick="copyCode(this,'code-git')" data-i18n="common.copy">Copy</button>
+        <span class="prompt">$</span> <span class="cmd">git clone https://github.com/MJbae/novel-studio my-novel</span><br>
+        <span class="prompt">$</span> <span class="cmd">cd my-novel && claude</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ THE WALL ══════════════ -->
+<section class="section-alt" id="wall">
+  <div class="container text-center">
+    <div class="section-tag reveal">THE WALL</div>
+    <h2 class="reveal" data-i18n="wall.title" data-i18n-html="true">The Real Reason AI<br><span style="color:#ef4444">Can't Write Long-Form Fiction</span></h2>
+    <p class="section-desc reveal" data-i18n="wall.desc" data-i18n-html="true">Writing a single 5,000-character episode is easy.<br>The challenge is scaling to <strong>300 episodes and 1.5 million characters</strong>. That's where AI breaks down.</p>
+
+    <div class="problem-grid">
+      <div class="problem-card card-amber reveal">
+        <div class="problem-icon icon-amber">&#x1F464;</div>
+        <h3 data-i18n="wall.p1_title">Characters Lose Their Depth</h3>
+        <p data-i18n="wall.p1_desc">A tough character in episode 50 turns indecisive by episode 200. Across dozens of characters, distinct voices, mannerisms, and motivations blur into sameness over time.</p>
+        <div class="solution-box">
+          <div class="solution-tag tag-amber">SOLUTION</div>
+          <div class="solution-name" data-i18n="wall.p1_name">Character Sheet + Voice Table</div>
+          <div class="solution-desc" data-i18n="wall.p1_sol">Define each character's speech patterns, verbal tics, and non-verbal palette at the design stage, then auto-verify every episode against VOICE, TITLE, and ALIVE axes</div>
+        </div>
+      </div>
+      <div class="problem-card card-blue reveal">
+        <div class="problem-icon icon-blue">&#x1F517;</div>
+        <h3 data-i18n="wall.p2_title">Plot Coherence Breaks Down</h3>
+        <p data-i18n="wall.p2_desc">When a plot thread planted in episode 100 pays off in episode 250, any mid-story contradictions are immediately obvious to readers.</p>
+        <div class="solution-box sol-blue">
+          <div class="solution-tag tag-blue">SOLUTION</div>
+          <div class="solution-name" data-i18n="wall.p2_name">Plot Hook Guide + continuity-bridge</div>
+          <div class="solution-desc" data-i18n="wall.p2_sol">Decompose the entire narrative into 25-episode beat arcs, and auto-collect the timeline, foreshadowing, and character states from the previous 2 episodes before each draft</div>
+        </div>
+      </div>
+      <div class="problem-card card-purple reveal">
+        <div class="problem-icon icon-purple">&#x1F522;</div>
+        <h3 data-i18n="wall.p3_title">Facts &amp; Figures Contradict</h3>
+        <p data-i18n="wall.p3_desc">When specific numbers like prices, dates, and ages change from episode to episode, the entire world's credibility collapses in a single line.</p>
+        <div class="solution-box sol-purple">
+          <div class="solution-tag tag-purple">SOLUTION</div>
+          <div class="solution-name" data-i18n="wall.p3_name">guard_rails + LOGIC Axis</div>
+          <div class="solution-desc" data-i18n="wall.p3_sol">Define absolute rules in a config file and cross-verify numbers and timelines against the previous 2 episodes during the polish pass</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ PIPELINE ══════════════ -->
+<section id="pipeline">
+  <div class="container text-center">
+    <div class="section-tag reveal">PIPELINE</div>
+    <h2 class="reveal" data-i18n="pipe.title" data-i18n-html="true">An Entire Novel in <span style="color:#f59e0b">5 Commands</span></h2>
+
+    <div class="pipeline-track">
+      <div class="pipe-step reveal">
+        <div class="pipe-dot dot-amber">&#x1F4A1;</div>
+        <div>
+          <div class="pipe-cmd cmd-amber">/propose</div>
+          <div class="pipe-label" data-i18n="pipe.s1_label">Ideate</div>
+          <div class="pipe-desc" data-i18n="pipe.s1_desc">Generate 3 proposals from genre, platform &amp; concept</div>
+        </div>
+      </div>
+      <div class="pipe-step reveal">
+        <div class="pipe-dot dot-blue">&#x1F4D0;</div>
+        <div>
+          <div class="pipe-cmd cmd-blue">/design</div>
+          <div class="pipe-label" data-i18n="pipe.s2_label">Design</div>
+          <div class="pipe-desc" data-i18n="pipe.s2_desc">Bootstrap + Character Sheet + Plot Hook Guide</div>
+        </div>
+      </div>
+      <div class="pipe-step reveal">
+        <div class="pipe-dot dot-green">&#x270D;&#xFE0F;</div>
+        <div>
+          <div class="pipe-cmd cmd-green">/create</div>
+          <div class="pipe-label" data-i18n="pipe.s3_label">Draft</div>
+          <div class="pipe-desc" data-i18n="pipe.s3_desc">Write episodes sequentially from design docs</div>
+        </div>
+      </div>
+      <div class="pipe-step reveal">
+        <div class="pipe-dot dot-purple">&#x1F48E;</div>
+        <div>
+          <div class="pipe-cmd cmd-purple">/polish</div>
+          <div class="pipe-label" data-i18n="pipe.s4_label">Polish</div>
+          <div class="pipe-desc" data-i18n="pipe.s4_desc">16-axis verification, 6 agents in parallel</div>
+        </div>
+      </div>
+      <div class="pipe-step reveal">
+        <div class="pipe-dot dot-pink">&#x267B;&#xFE0F;</div>
+        <div>
+          <div class="pipe-cmd cmd-pink">/rewrite</div>
+          <div class="pipe-label" data-i18n="pipe.s5_label">Rewrite</div>
+          <div class="pipe-desc" data-i18n="pipe.s5_desc">Auto-calculate impact scope when designs change</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ AGENTS ══════════════ -->
+<section class="section-alt" id="agents">
+  <div class="container text-center">
+    <div class="section-tag reveal">AGENTS</div>
+    <h2 class="reveal" data-i18n="agents.title" data-i18n-html="true">Design big, break it down,<br>let <span style="color:#f59e0b">18 agents</span> refine it</h2>
+    <p class="section-desc reveal" data-i18n="agents.desc">First, lay out the full narrative arc. Then decompose it into 25-episode blocks. From drafting to polishing, specialized agents handle every step.</p>
+
+    <div class="agent-grid reveal">
+      <!-- Design 5 -->
+      <div class="agent-phase">
+        <div class="agent-phase-header">
+          <span class="agent-phase-dot" style="background:#3b82f6;box-shadow:0 0 10px rgba(59,130,246,0.5)"></span>
+          <span class="agent-phase-label" data-i18n="agents.design">Design</span>
+          <span class="agent-phase-count" style="color:#3b82f6">5</span>
+        </div>
+        <div class="agent-chips">
+          <span class="agent-chip chip-blue">&#x1F4A1; concept-builder</span>
+          <span class="agent-chip chip-blue">&#x1F464; character-architect</span>
+          <span class="agent-chip chip-blue">&#x1FA9D; plot-hook-engineer</span>
+          <span class="agent-chip chip-blue">&#x1F4CB; proposal-generator</span>
+          <span class="agent-chip chip-blue">&#x1F50D; domain-researcher</span>
+        </div>
+      </div>
+      <!-- Draft 4 -->
+      <div class="agent-phase">
+        <div class="agent-phase-header">
+          <span class="agent-phase-dot" style="background:#10b981;box-shadow:0 0 10px rgba(16,185,129,0.5)"></span>
+          <span class="agent-phase-label" data-i18n="agents.creation">Creation</span>
+          <span class="agent-phase-count" style="color:#10b981">4</span>
+        </div>
+        <div class="agent-chips">
+          <span class="agent-chip chip-green">&#x1F3D7;&#xFE0F; episode-architect</span>
+          <span class="agent-chip chip-green">&#x270D;&#xFE0F; episode-creator</span>
+          <span class="agent-chip chip-green">&#x1F517; continuity-bridge</span>
+          <span class="agent-chip chip-green">&#x2705; quality-verifier</span>
+        </div>
+      </div>
+      <!-- Polish 6 -->
+      <div class="agent-phase">
+        <div class="agent-phase-header">
+          <span class="agent-phase-dot" style="background:#8b5cf6;box-shadow:0 0 10px rgba(139,92,246,0.5)"></span>
+          <span class="agent-phase-label" data-i18n="agents.polish">Polish</span>
+          <span class="agent-phase-count" style="color:#8b5cf6">6</span>
+        </div>
+        <div class="agent-chips">
+          <span class="agent-chip chip-purple">&#x1F4CF; rule-checker</span>
+          <span class="agent-chip chip-purple">&#x1F4CA; story-analyst</span>
+          <span class="agent-chip chip-purple">&#x1F4F1; platform-optimizer</span>
+          <span class="agent-chip chip-purple">&#x1F4AB; alive-enhancer</span>
+          <span class="agent-chip chip-purple">&#x1F527; revision-executor</span>
+          <span class="agent-chip chip-purple">&#x1F441;&#xFE0F; revision-reviewer</span>
+        </div>
+      </div>
+      <!-- Rewrite 4 -->
+      <div class="agent-phase">
+        <div class="agent-phase-header">
+          <span class="agent-phase-dot" style="background:#ec4899;box-shadow:0 0 10px rgba(236,72,153,0.5)"></span>
+          <span class="agent-phase-label" data-i18n="agents.rewrite">Rewrite</span>
+          <span class="agent-phase-count" style="color:#ec4899">4</span>
+        </div>
+        <div class="agent-chips">
+          <span class="agent-chip chip-pink">&#x1F52C; revision-analyst</span>
+          <span class="agent-chip chip-pink">&#x1F5FF; character-sculptor</span>
+          <span class="agent-chip chip-pink">&#x267B;&#xFE0F; episode-rewriter</span>
+          <span class="agent-chip chip-pink">&#x2705; quality-verifier</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ QUALITY AXES ══════════════ -->
+<section id="axes">
+  <div class="container text-center">
+    <div class="section-tag reveal">QUALITY AXES</div>
+    <h2 class="reveal" data-i18n="axes.title" data-i18n-html="true"><span style="color:#f59e0b">16</span>-Axis Polish System</h2>
+    <p class="section-desc reveal" data-i18n="axes.desc">Every episode goes through 16 verification passes. Banned expressions, character voice, foreshadowing continuity, mobile readability — catching what even human editors miss.</p>
+
+    <div class="axes-grid reveal">
+      <div class="axis-item ax-red"><div class="axis-id">1</div><div class="axis-name">BANNED</div><div class="axis-desc" data-i18n="ax.1">Prohibited phrases</div></div>
+      <div class="axis-item ax-amber"><div class="axis-id">2</div><div class="axis-name">VOICE</div><div class="axis-desc" data-i18n="ax.2">Character voice</div></div>
+      <div class="axis-item ax-amber"><div class="axis-id">3</div><div class="axis-name">TITLE</div><div class="axis-desc" data-i18n="ax.3">Form of address</div></div>
+      <div class="axis-item ax-purple"><div class="axis-id">4</div><div class="axis-name">SILENCE</div><div class="axis-desc" data-i18n="ax.4">Silence patterns</div></div>
+      <div class="axis-item ax-red"><div class="axis-id">5</div><div class="axis-name">TRANS</div><div class="axis-desc" data-i18n="ax.5">AI tone detection</div></div>
+      <div class="axis-item ax-blue"><div class="axis-id">6</div><div class="axis-name">SCENE</div><div class="axis-desc" data-i18n="ax.6">Scene structure</div></div>
+      <div class="axis-item ax-blue"><div class="axis-id">7</div><div class="axis-name">LOGIC</div><div class="axis-desc" data-i18n="ax.7">Narrative logic</div></div>
+      <div class="axis-item ax-purple"><div class="axis-id">8</div><div class="axis-name">SUMMARY</div><div class="axis-desc" data-i18n="ax.8">Scene purpose</div></div>
+      <div class="axis-item ax-blue"><div class="axis-id">9</div><div class="axis-name">UNIFORM</div><div class="axis-desc" data-i18n="ax.9">Cross-ep consistency</div></div>
+      <div class="axis-item ax-green"><div class="axis-id">10</div><div class="axis-name">HOOK</div><div class="axis-desc" data-i18n="ax.10">Hook strength</div></div>
+      <div class="axis-item ax-green"><div class="axis-id">11</div><div class="axis-name">OPENING</div><div class="axis-desc" data-i18n="ax.11">Opening hook</div></div>
+      <div class="axis-item ax-cyan"><div class="axis-id">12</div><div class="axis-name">MOBILE</div><div class="axis-desc" data-i18n="ax.12">Mobile readability</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A1</div><div class="axis-name">ALIVE&sup1;</div><div class="axis-desc" data-i18n="ax.a1">Echo</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A2</div><div class="axis-name">ALIVE&sup2;</div><div class="axis-desc" data-i18n="ax.a2">Non-verbal</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A3</div><div class="axis-name">ALIVE&sup3;</div><div class="axis-desc" data-i18n="ax.a3">Tension point</div></div>
+      <div class="axis-item ax-pink"><div class="axis-id">A4</div><div class="axis-name">ALIVE&#x2074;</div><div class="axis-desc" data-i18n="ax.a4">Emotional distance</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ STORY ══════════════ -->
+<section class="section-alt" id="story">
+  <div class="container text-center">
+    <div class="section-tag reveal">STORY</div>
+    <h2 class="reveal" data-i18n="story.title" data-i18n-html="true">How This Harness<br><span style="color:#f59e0b">Came to Be</span></h2>
+
+    <div class="timeline">
+      <div class="timeline-row reveal">
+        <div class="timeline-track">
+          <div class="timeline-node" style="background:#f59e0b;box-shadow:0 0 14px rgba(245,158,11,0.4)">01</div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-label" style="color:#f59e0b" data-i18n="story.l1">BACKGROUND</div>
+          <p class="timeline-text" data-i18n="story.t1" data-i18n-html="true">I took <strong>8 weeks of lessons</strong> from a bestselling web novel author. Synopsis, plot structure, character design — I learned the professional workflow that carries a series through 300 episodes.</p>
+        </div>
+      </div>
+      <div class="timeline-row reveal">
+        <div class="timeline-track">
+          <div class="timeline-node" style="background:#3b82f6;box-shadow:0 0 14px rgba(59,130,246,0.4)">02</div>
+          <div class="timeline-line"></div>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-label" style="color:#3b82f6" data-i18n="story.l2">HARNESS ENGINEERING</div>
+          <p class="timeline-text" data-i18n="story.t2">Once I translated that knowledge into a harness, the real work began. Over the course of 40 published episodes, I iterated — fixing, adding, and refining with every chapter.</p>
+        </div>
+      </div>
+      <div class="timeline-row reveal">
+        <div class="timeline-track">
+          <div class="timeline-node" style="background:#ec4899;box-shadow:0 0 14px rgba(236,72,153,0.4)">03</div>
+        </div>
+        <div class="timeline-card card-highlight">
+          <div class="timeline-label" style="color:#ec4899" data-i18n="story.l3">LIMITATIONS</div>
+          <p class="timeline-text" data-i18n="story.t3">The 16-axis polish system isn't perfect yet. Code can be validated with tests, but novel quality demands qualitative judgment. "Technically correct but lifeless prose" is still a human domain.</p>
+          <p class="timeline-closing" style="color:#ec4899" data-i18n="story.closing">Novel Studio doesn't replace the author. It's the tool that keeps you going — all the way to episode 300.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="container">
+    <div class="links">
+      <a href="https://github.com/MJbae/novel-studio" target="_blank">GitHub</a>
+    </div>
+    <p>Apache 2.0 License &copy; 2026 Novel Studio</p>
+  </div>
+</footer>
+
+<script>
+// ── i18n Data ──
+const i18n = {
+  "hero.sub": {
+    en: 'A harness-driven creative pipeline<br><strong>for writing long-form web novels</strong>',
+    ko: '장편 웹소설을 써내는<br><strong>하네스 기반 창작 파이프라인</strong>'
+  },
+  "hero.proof_label": { en: "A web novel written by this harness", ko: "하네스가 쓴 웹소설이" },
+  "hero.proof_title": { en: "Signed a publishing deal", ko: "출판사 정식 연재 계약 체결" },
+  "hero.proof_note": { en: "\u203B Title under NDA", ko: "\u203B 작품명은 계약상 비공개" },
+  "hero.views": { en: "Daily Views", ko: "1일 조회수" },
+  "hero.likes": { en: "Likes", ko: "좋아요" },
+  "hero.subs": { en: "Subscribers", ko: "구독자" },
+
+  "wall.title": {
+    en: 'The Real Reason AI<br><span style="color:#ef4444">Can\'t Write Long-Form Fiction</span>',
+    ko: 'AI가 장편을<br><span style="color:#ef4444">못 쓰는 진짜 이유</span>'
+  },
+  "wall.desc": {
+    en: 'Writing a single 5,000-character episode is easy.<br>The challenge is scaling to <strong>300 episodes and 1.5 million characters</strong>. That\'s where AI breaks down.',
+    ko: '1화 5,000자는 어렵지 않습니다.<br>문제는 <strong>300화, 150만 자</strong>입니다. 여기서 AI는 무너집니다.'
+  },
+  "wall.p1_title": { en: "Characters Lose Their Depth", ko: "인물의 입체성 붕괴" },
+  "wall.p1_desc": { en: "A tough character in episode 50 turns indecisive by episode 200. Across dozens of characters, distinct voices, mannerisms, and motivations blur into sameness over time.", ko: "50화에서 강인했던 캐릭터가 200화에서 갑자기 우유부단해집니다. 수십 명의 등장인물 성격\xB7말투\xB7동기가 회차를 거듭할수록 획일화됩니다." },
+  "wall.p1_name": { en: "Character Sheet + Voice Table", ko: "캐릭터시트 + 보이스 테이블" },
+  "wall.p1_sol": { en: "Define each character's speech patterns, verbal tics, and non-verbal palette at the design stage, then auto-verify every episode against VOICE, TITLE, and ALIVE axes", ko: "캐릭터별 말투\xB7어미\xB7비언어 팔레트를 설계 단계에서 정의하고, VOICE\xB7TITLE\xB7ALIVE 축으로 매 화 자동 검증" },
+  "wall.p2_title": { en: "Plot Coherence Breaks Down", ko: "스토리 개연성 파괴" },
+  "wall.p2_desc": { en: "When a plot thread planted in episode 100 pays off in episode 250, any mid-story contradictions are immediately obvious to readers.", ko: "100화에 깔아둔 복선이 250화에서 회수될 때, 중간에 설정이 바뀌어 있으면 독자는 바로 알아챕니다." },
+  "wall.p2_name": { en: "Plot Hook Guide + continuity-bridge", ko: "플롯훅가이드 + continuity-bridge" },
+  "wall.p2_sol": { en: "Decompose the entire narrative into 25-episode beat arcs, and auto-collect the timeline, foreshadowing, and character states from the previous 2 episodes before each draft", ko: "전체 서사를 25화 단위 비트로 분해하고, 매 화 집필 전 직전 2화의 타임라인\xB7복선\xB7인물 상태를 자동 수집" },
+  "wall.p3_title": { en: "Facts & Figures Contradict", ko: "숫자\xB7설정의 불일치" },
+  "wall.p3_desc": { en: "When specific numbers like prices, dates, and ages change from episode to episode, the entire world's credibility collapses in a single line.", ko: "가격, 연도, 나이 같은 구체적 수치가 화마다 달라지면, 세계관의 신뢰가 한 줄에 무너집니다." },
+  "wall.p3_name": { en: "guard_rails + LOGIC Axis", ko: "guard_rails + LOGIC 축" },
+  "wall.p3_sol": { en: "Define absolute rules in a config file and cross-verify numbers and timelines against the previous 2 episodes during the polish pass", ko: "절대 규칙을 설정 파일에 정의하고, 윤문 시 직전 2화와 수치\xB7타임라인을 교차 검증" },
+
+  "pipe.title": {
+    en: 'An Entire Novel in <span style="color:#f59e0b">5 Commands</span>',
+    ko: '명령어 5개로 <span style="color:#f59e0b">소설 한 편</span>'
+  },
+  "pipe.s1_label": { en: "Ideate", ko: "기획" },
+  "pipe.s1_desc": { en: "Generate 3 proposals from genre, Korean platform & concept", ko: "장르\xB7한국 플랫폼\xB7컨셉으로 기획안 3개 생성" },
+  "pipe.s2_label": { en: "Design", ko: "설계" },
+  "pipe.s2_desc": { en: "Bootstrap + Character Sheet + Plot Hook Guide", ko: "부트스트랩 + 캐릭터시트 + 플롯훅가이드" },
+  "pipe.s3_label": { en: "Draft", ko: "집필" },
+  "pipe.s3_desc": { en: "Write episodes sequentially from design docs", ko: "설계문서 기반 에피소드 순차 집필" },
+  "pipe.s4_label": { en: "Polish", ko: "윤문" },
+  "pipe.s4_desc": { en: "16-axis verification, 6 agents in parallel", ko: "16축 검증, 6에이전트 병렬" },
+  "pipe.s5_label": { en: "Rewrite", ko: "재작성" },
+  "pipe.s5_desc": { en: "Auto-calculate impact scope when designs change", ko: "설계 변경 시 영향 범위 자동 산출" },
+
+  "agents.title": {
+    en: 'Design big, break it down,<br>let <span style="color:#f59e0b">18 agents</span> refine it',
+    ko: '크게 설계하고, 잘게 쪼개고,<br><span style="color:#f59e0b">18개 에이전트</span>가 깎는다'
+  },
+  "agents.desc": { en: "First, lay out the full narrative arc. Then decompose it into 25-episode blocks. From drafting to polishing, specialized agents handle every step.", ko: "전체 서사를 먼저 잡고, 25화 단위로 분해한 뒤, 집필부터 윤문까지 전문 에이전트가 나눠 맡습니다." },
+  "agents.design": { en: "Design", ko: "설계" },
+  "agents.creation": { en: "Creation", ko: "집필" },
+  "agents.polish": { en: "Polish", ko: "윤문" },
+  "agents.rewrite": { en: "Rewrite", ko: "재작성" },
+
+  "axes.title": {
+    en: '<span style="color:#f59e0b">16</span>-Axis Polish System',
+    ko: '<span style="color:#f59e0b">16</span>축 윤문 시스템'
+  },
+  "axes.desc": { en: "Every episode goes through 16 verification passes. Banned expressions, character voice, foreshadowing continuity, mobile readability \u2014 catching what even human editors miss.", ko: "에피소드 하나에 16번의 검증. 금지 표현, 캐릭터 음성, 복선 정합성, 모바일 가독성 \u2014 사람 편집자도 놓치는 것까지 잡습니다." },
+  "ax.1": { en: "Prohibited phrases", ko: "금지 표현" },
+  "ax.2": { en: "Character voice", ko: "캐릭터 음성" },
+  "ax.3": { en: "Form of address", ko: "호칭 규칙" },
+  "ax.4": { en: "Silence patterns", ko: "침묵 패턴" },
+  "ax.5": { en: "AI tone detection", ko: "번역체 탐지" },
+  "ax.6": { en: "Scene structure", ko: "장면 구조" },
+  "ax.7": { en: "Narrative logic", ko: "서사 논리" },
+  "ax.8": { en: "Scene purpose", ko: "장면 존재 이유" },
+  "ax.9": { en: "Cross-ep consistency", ko: "화간 일관성" },
+  "ax.10": { en: "Hook strength", ko: "훅 강도" },
+  "ax.11": { en: "Opening hook", ko: "오프닝 훅" },
+  "ax.12": { en: "Mobile readability", ko: "모바일 가독성" },
+  "ax.a1": { en: "Echo", ko: "메아리" },
+  "ax.a2": { en: "Non-verbal", ko: "비언어" },
+  "ax.a3": { en: "Tension point", ko: "긴장점" },
+  "ax.a4": { en: "Emotional distance", ko: "거리감" },
+
+  "story.title": {
+    en: 'How This Harness<br><span style="color:#f59e0b">Came to Be</span>',
+    ko: '이 하네스가<br><span style="color:#f59e0b">만들어지기까지</span>'
+  },
+  "story.l1": { en: "BACKGROUND", ko: "배경" },
+  "story.t1": {
+    en: 'I took <strong>8 weeks of lessons</strong> from a bestselling web novel author. Synopsis, plot structure, character design \u2014 I learned the professional workflow that carries a series through 300 episodes.',
+    ko: '유명 웹소설 작가에게 <strong>8주간 수업</strong>을 들었습니다. 시놉시스, 플롯, 캐릭터 설계 \u2014 프로 작가가 300화를 끌고 가는 현업 워크플로우를 배웠습니다.'
+  },
+  "story.l2": { en: "HARNESS ENGINEERING", ko: "하네스 엔지니어링" },
+  "story.t2": { en: "Once I translated that knowledge into a harness, the real work began. Over the course of 40 published episodes, I iterated \u2014 fixing, adding, and refining with every chapter.", ko: "이걸 하네스로 옮기고 나서, 실전이 시작됐습니다. 40화를 연재하는 동안 매 화마다 고치고, 추가하고, 다시 깎았습니다." },
+  "story.l3": { en: "LIMITATIONS", ko: "한계" },
+  "story.t3": { en: "The 16-axis polish system isn't perfect yet. Code can be validated with tests, but novel quality demands qualitative judgment. \"Technically correct but lifeless prose\" is still a human domain.", ko: "16축 윤문은 아직 완벽하지 않습니다. 코드는 테스트 코드로 검증하면 되지만, 소설의 품질은 정성적 평가가 필요하죠. '맞는데 재미없는 문장'은 아직 사람의 영역입니다." },
+  "story.closing": { en: "Novel Studio doesn't replace the author. It's the tool that keeps you going \u2014 all the way to episode 300.", ko: "Novel Studio는 작가를 대체하지 않습니다. 300화를 끝까지 쓸 수 있게, 옆에서 버텨주는 도구입니다." },
+
+  "install.title": { en: "Get Started", ko: "시작하기" },
+  "install.label1": { en: "Plugin Install (Recommended)", ko: "플러그인 설치 (추천)" },
+  "install.label2": { en: "Manual Install (Git Clone)", ko: "수동 설치 (Git Clone)" },
+  "common.copy": { en: "Copy", ko: "복사" }
+};
+
+// ── Language Detection & Switching ──
+function detectLang() {
+  const hash = location.hash.replace('#', '').toLowerCase();
+  if (['en', 'ko'].includes(hash)) return hash;
+  const stored = localStorage.getItem('novel-studio-lang');
+  if (stored) return stored;
+  const nav = (navigator.language || '').toLowerCase();
+  if (nav.startsWith('ko')) return 'ko';
+  return 'en';
+}
+let currentLang = detectLang();
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('novel-studio-lang', lang);
+  history.replaceState(null, '', '#' + lang);
+  document.documentElement.lang = lang;
+  if (lang === 'ko') {
+    document.documentElement.classList.add('lang-ko');
+  } else {
+    document.documentElement.classList.remove('lang-ko');
+  }
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (i18n[key] && i18n[key][lang]) {
+      if (el.dataset.i18nHtml === 'true') {
+        el.innerHTML = i18n[key][lang];
+      } else {
+        el.textContent = i18n[key][lang];
+      }
+    }
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+// Initialize
+setLang(currentLang);
+
+// ── Scroll Reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: .15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── Pipeline Step Activation ──
+const pipeObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+}, { threshold: .3 });
+document.querySelectorAll('.pipe-step').forEach(el => pipeObs.observe(el));
+
+// ── Counter Animation ──
+let counted = false;
+const statsObs = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && !counted) {
+    counted = true;
+    document.querySelectorAll('[data-target]').forEach(el => {
+      const target = +el.dataset.target;
+      const suffix = el.dataset.suffix || '';
+      const dur = 1500;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * ease).toLocaleString() + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+}, { threshold: .5 });
+const metricsRow = document.querySelector('.metrics-row');
+if (metricsRow) statsObs.observe(metricsRow);
+
+// ── Copy Code Block ──
+function copyCode(btn, blockId) {
+  const block = document.getElementById(blockId);
+  const cmds = block.querySelectorAll('.cmd');
+  const text = Array.from(cmds).map(c => c.textContent).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '\u2713';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      const key = 'common.copy';
+      btn.textContent = (i18n[key] && i18n[key][currentLang]) || 'Copy';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
