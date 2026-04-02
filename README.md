@@ -4,10 +4,10 @@
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple.svg" alt="Claude Code Plugin">
   <img src="https://img.shields.io/badge/Agents-18-orange.svg" alt="18 Agents">
   <img src="https://img.shields.io/badge/Skills-10-green.svg" alt="10 Skills">
-  <a href="https://github.com/MJbae/novel-studio/stargazers"><img src="https://img.shields.io/github/stars/MJbae/novel-studio?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/MJbae/awesome-novel-studio/stargazers"><img src="https://img.shields.io/github/stars/MJbae/awesome-novel-studio?style=social" alt="GitHub Stars"></a>
 </p>
 
-# Novel Studio
+# Awesome Novel Studio
 
 **AI Web Novel Creation Harness** — A Claude Code Plugin
 
@@ -26,7 +26,7 @@ An end-to-end web novel production system built on Claude Code. Combines 18 spec
 
 #### Add the marketplace
 ```shell
-/plugin marketplace add MJbae/novel-studio
+/plugin marketplace add MJbae/awesome-novel-studio
 ```
 
 #### Install the plugin
@@ -76,7 +76,7 @@ Propose ────── Design ─────────────── 
 
 Writing a single 5,000-character episode with AI is easy. Scaling that to 300 episodes and 1.5 million characters is where things break.
 
-| The Wall | Symptom | Novel Studio's Solution |
+| The Wall | Symptom | Awesome Novel Studio's Solution |
 |----------|---------|------------------------|
 | **Character depth collapse** | Distinct personalities, speech patterns, and motivations blur into sameness as episodes accumulate. | **Character sheet + voice table** — Define each character's tone, sentence endings, and non-verbal palette at design time. Automatically verified every episode via the `VOICE`, `TITLE`, and `ALIVE` polish axes. |
 | **Story coherence breakdown** | Cause-and-effect chains and foreshadowing unravel across a sprawling world. | **Plot-hook guide + continuity-bridge** — Decompose the full narrative arc into 25-episode beat structures. Before each episode, `continuity-bridge` collects timeline, foreshadowing, and character state from the previous 2 episodes and feeds it to the creation agent. |

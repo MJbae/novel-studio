@@ -4,12 +4,12 @@
   <img src="https://img.shields.io/badge/Claude_Code-Plugin-purple.svg" alt="Claude Code Plugin">
   <img src="https://img.shields.io/badge/Agents-18-orange.svg" alt="18 Agents">
   <img src="https://img.shields.io/badge/Skills-10-green.svg" alt="10 Skills">
-  <a href="https://github.com/MJbae/novel-studio/stargazers"><img src="https://img.shields.io/github/stars/MJbae/novel-studio?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/MJbae/awesome-novel-studio/stargazers"><img src="https://img.shields.io/github/stars/MJbae/awesome-novel-studio?style=social" alt="GitHub Stars"></a>
 </p>
 
 [English](README.md) | **한국어**
 
-# Novel Studio
+# Awesome Novel Studio
 
 AI 기반 웹소설 창작 하네스. Claude Code 위에서 동작하며, 18개 전문 에이전트와 10개 스킬을 조합해 **기획 → 설계 → 집필 → 윤문 → 재작성** 전 과정을 자동화합니다.
 
@@ -24,7 +24,7 @@ AI 기반 웹소설 창작 하네스. Claude Code 위에서 동작하며, 18개 
 
 #### 마켓플레이스 등록
 ```shell
-/plugin marketplace add MJbae/novel-studio
+/plugin marketplace add MJbae/awesome-novel-studio
 ```
 
 #### 플러그인 설치
@@ -74,7 +74,7 @@ AI 기반 웹소설 창작 하네스. Claude Code 위에서 동작하며, 18개 
 
 1화 5,000자는 어렵지 않습니다. 문제는 이걸 300화, 150만 자로 늘렸을 때 벌어집니다.
 
-| 장편 연재의 벽 | 증상 | Novel Studio의 해법 |
+| 장편 연재의 벽 | 증상 | Awesome Novel Studio의 해법 |
 |---------------|------|---------------------|
 | **인물의 입체성 붕괴** | 수많은 등장인물의 고유한 성격과 화법, 내적 동기가 회차를 거듭할수록 흐릿해지고 획일화된다. | **캐릭터시트 + 보이스 테이블** — 캐릭터별 말투·어미·비언어 팔레트를 설계 단계에서 정의하고, 집필·윤문 시 `VOICE`·`TITLE`·`ALIVE` 축으로 매 화 자동 검증한다. |
 | **스토리 개연성 파괴** | 방대한 세계관 속에서 촘촘하게 쌓아 올린 사건의 인과관계와 복선이 엇나간다. | **플롯훅가이드 + continuity-bridge** — 전체 서사 아크를 25화 단위로 비트 분해하고, 매 화 집필 전 `continuity-bridge`가 직전 2화의 타임라인·복선·인물 상태를 수집해 집필 에이전트에 전달한다. |
