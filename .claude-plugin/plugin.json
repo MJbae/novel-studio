@@ -1,0 +1,22 @@
+{
+  "name": "novel-studio",
+  "version": "1.1.0",
+  "description": "AI 웹소설 창작 하네스. 18개 전문 에이전트와 10개 스킬로 기획→설계→집필→윤문→재작성 전 과정을 자동화. Web novel creation harness with end-to-end automation from planning to publishing.",
+  "author": {
+    "name": "MJbae",
+    "url": "https://github.com/MJbae"
+  },
+  "homepage": "https://MJbae.github.io/novel-studio/",
+  "repository": "https://github.com/MJbae/novel-studio",
+  "license": "Apache-2.0",
+  "keywords": [
+    "web-novel",
+    "creative-writing",
+    "ai-writing",
+    "harness",
+    "episode-creation",
+    "proofreading",
+    "character-design",
+    "plot-design"
+  ]
+}

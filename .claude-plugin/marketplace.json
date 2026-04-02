@@ -1,0 +1,14 @@
+{
+  "name": "novel-studio-marketplace",
+  "owner": {
+    "name": "MJbae"
+  },
+  "plugins": [
+    {
+      "name": "novel-studio",
+      "source": "./",
+      "description": "AI 웹소설 창작 하네스",
+      "version": "1.0.0"
+    }
+  ]
+}
