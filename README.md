@@ -74,7 +74,7 @@ Propose ────── Design ─────────────── 
 
 ## The Three Walls of Long-Form AI Fiction
 
-Writing a single 5,000-character episode with AI is easy. Scaling that to 300 episodes and 1.5 million characters is where things break.
+Writing a single 5,000-character episode with AI is easy. Scaling that to a full-length serial novel is where things break.
 
 | The Wall | Symptom | Awesome Novel Studio's Solution |
 |----------|---------|------------------------|
