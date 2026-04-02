@@ -22,11 +22,17 @@ An end-to-end web novel production system built on Claude Code. Combines 18 spec
 
 ## Installation
 
-### Method 1: Plugin Install (Recommended)
+### Method 1: Plugin Marketplace (Recommended)
 
 ```bash
-# Install directly from GitHub
-/plugin install github:MJbae/novel-studio
+# Step 1: Add the marketplace
+/plugin marketplace add MJbae/novel-studio
+
+# Step 2: Install the plugin
+/plugin install novel-studio@novel-studio-marketplace
+
+# Step 3: Reload (no restart needed)
+/reload-plugins
 
 # Invoke skills (plugin namespace)
 /novel-studio:propose
@@ -34,7 +40,15 @@ An end-to-end web novel production system built on Claude Code. Combines 18 spec
 /novel-studio:polish
 ```
 
-### Method 2: Git Clone
+### Method 2: Local Development
+
+```bash
+# Clone and load as a local plugin
+git clone https://github.com/MJbae/novel-studio
+claude --plugin-dir ./novel-studio
+```
+
+### Method 3: Git Clone (Direct)
 
 ```bash
 git clone https://github.com/MJbae/novel-studio my-novel
@@ -44,7 +58,7 @@ cd my-novel && claude
 
 ### Requirements
 
-- [Claude Code](https://claude.com/claude-code) with [Agent Teams](https://code.claude.com/docs/en/agent-teams) enabled: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- [Claude Code](https://claude.com/claude-code) installed
 
 ---
 

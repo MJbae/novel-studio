@@ -18,5 +18,7 @@
     "proofreading",
     "character-design",
     "plot-design"
-  ]
+  ],
+  "skills": "./skills/",
+  "agents": "./agents/"
 }
