@@ -30,10 +30,15 @@ project:
 | 문서 키 | 경로 | 용도 |
 |---------|------|------|
 | character_core | design/character_sheet.md | 캐릭터 핵심 정의, 인물 관계, 고유 설정 |
-| character_detail | design/character_sheet_detail.md | 보이스표, 호칭표, 비언어 태그, 관계 변화 |
+| character_detail | design/character_sheet_detail.md | 보이스표, 호칭표, 비언어 태그, 관계 변화, 호칭 전환 조건 |
 | dialogue_dna | design/character_sheet.md#dialogue-dna | Dialogue DNA (대사 고유성 정의). 캐릭터시트 내 섹션 또는 별도 파일. 없으면 character_detail로 대체 |
 | bootstrap | design/bootstrap.md | 매크로 수치, 세계관 규칙, 시간선 |
 | writing_rules | CLAUDE.md | 집필 규칙 바이블 (rewrite 전용, 기본값: 프로젝트 루트의 CLAUDE.md) |
+
+#### 호칭 전환 조건 (선택)
+관계 변화에 따라 호칭이 바뀌는 경우 아래 형식으로 기술한다.
+| 화자 | 청자 | 전환 트리거 (EP/이벤트) | 이전 허용 | 이후 위반 | 등급 |
+|------|------|----------------------|----------|----------|------|
 
 #### 2-2. EP 범위별 설정문서
 
@@ -73,7 +78,7 @@ project:
 | 축 | 참조 문서 키 | 용도 |
 |----|------------|------|
 | VOICE | character_detail | 보이스표(종결어미·길이·패턴) 대조 |
-| TITLE | character_detail | 호칭 규칙표(화자×청자 매트릭스) |
+| TITLE | character_detail | 호칭 규칙표(화자×청자 매트릭스), 호칭 전환 조건 |
 | BANNED | character_core | 주인공 감정 표현 규칙 (있을 경우) |
 | TRANS | — | grep 기반, 설정문서 불필요 |
 | SILENCE | — | 카운트 기반, 설정문서 불필요 |
